@@ -34,10 +34,11 @@ def download_file(remote_path, local_path):
     except Exception as e:
         print(f"Failed to download file: {e}")
 
-download_file("cell_images/chosen_image.tiff","decoded_image.tiff")
+local_path = os.path.join(os.getcwd(), "decoded_image.tiff")
+download_file("cell_images/chosen_image.tiff", local_path)
 
 # open image data and convert to Python from Java
-data = io.imread('decoded_image.tiff')
+data = io.imread(local_path)
 # run Cellpose on cytoplasm (grayscale)
 model = models.CellposeModel(gpu=False, model_type='cyto2')
 ch = [0, 0]
@@ -60,10 +61,11 @@ colored_mask = cmap(normalized_mask)  # Apply colormap (RGBA output)
 colored_mask = (colored_mask[:, :, :3] * 255).astype(np.uint8)
 mask_pil = Image.fromarray(colored_mask)
 # Save the mask as a PNG file
-mask_pil.save('output_mask.png')
-
+local_path_mask = os.path.join(os.getcwd(), "output_mask.png")
+mask_pil.save(local_path_mask)
+local_path_number = os.path.join(os.getcwd(), "cell_number.txt")
 # Save to a text file
-with open("cell_number.txt", "w") as file:  # "w" mode overwrites the file if it exists
+with open(local_path_number, "w") as file:  # "w" mode overwrites the file if it exists
     file.write(str(num_cells))
 
 def upload_file_to_repo(local_file_path, repo_file_path, commit_message):
@@ -94,7 +96,7 @@ def upload_file_to_repo(local_file_path, repo_file_path, commit_message):
         print(f"Created file in repo: {repo_file_path}")
 
 # Push the generated files to the repo
-upload_file_to_repo("cell_number.txt", "output/cell_number.txt", "Add cell number text file")
-upload_file_to_repo("output_mask.png", "output/output_mask.png", "Add cell mask image")
+upload_file_to_repo(local_path_number, "output/cell_number.txt", "Add cell number text file")
+upload_file_to_repo(local_path_mask, "output/output_mask.png", "Add cell mask image")
 
 
