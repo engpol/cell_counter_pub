@@ -7,7 +7,7 @@ on:
 
 jobs:
   process_image:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     # Step 1: Check out the repository
@@ -18,7 +18,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 'python-3.11.x'  # Specify Python version as needed
+        python-version: '3.11.11'  # Specify Python version as needed
 
     # Step 3: Install dependencies
     - name: Install dependencies
