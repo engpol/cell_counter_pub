@@ -27,6 +27,9 @@ def download_file(remote_path, local_path):
         decoded_content = base64.b64decode(file.content)
         with open(local_path, "wb") as f:
             f.write(decoded_content)
+        print(f"File '{remote_path}' downloaded successfully.")
+    except Exception as e:
+        print(f"Failed to download file: {e}")
 
 download_file("cell_images/chosen_image.tiff","decoded_image.tiff")
 
