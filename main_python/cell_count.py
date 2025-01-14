@@ -7,6 +7,7 @@ from cellpose import io
 from PIL import Image
 from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
+from github import Github
 
 encoded_file_path = "cell_images/chosen_image.tiff"  # File containing Base64-encoded tiff image
 decoded_file_path = "cell_images/decoded_image.tiff" # File with decoded tiff image
@@ -50,5 +51,52 @@ mask_pil.save('output/output_mask.png')
 # Save to a text file
 with open("output/cell_number.txt", "w") as file:  # "w" mode overwrites the file if it exists
     file.write(str(num_cells))
+
+
+# Save to a text file
+with open("output/cell_number.txt", "w") as file:  # "w" mode overwrites the file if it exists
+    file.write(str(num_cells))
+
+
+# GitHub Configuration
+GITHUB_TOKEN = "${{ secrets.PATOKEN }}"  # Store this as a secret in GitHub Actions
+REPO_OWNER = "engpol"
+REPO_NAME = "Cell_Counter_Pub"
+BRANCH = "main"
+
+# Initialize GitHub
+g = Github(GITHUB_TOKEN)
+repo = g.get_repo(f"{REPO_OWNER}/{REPO_NAME}")
+
+def upload_file_to_repo(local_file_path, repo_file_path, commit_message):
+    """Uploads a local file to the GitHub repository."""
+    with open(local_file_path, "rb") as f:
+        content = f.read()  # Read raw binary content (no Base64 encoding)
+
+    try:
+        # Check if the file already exists
+        file = repo.get_contents(repo_file_path, ref=BRANCH)
+        # Update the file if it exists
+        repo.update_file(
+            path=file.path,
+            message=commit_message,
+            content=content,  # Pass raw content
+            sha=file.sha,
+            branch=BRANCH,
+        )
+        print(f"Updated file in repo: {repo_file_path}")
+    except Exception as e:
+        # Create the file if it doesn't exist
+        repo.create_file(
+            path=repo_file_path,
+            message=commit_message,
+            content=content,  # Pass raw content
+            branch=BRANCH,
+        )
+        print(f"Created file in repo: {repo_file_path}")
+
+# Push the generated files to the repo
+upload_file_to_repo("output/cell_number.txt", "output/cell_number.txt", "Add cell number text file")
+upload_file_to_repo("output/output_mask.png", "output/output_mask.png", "Add cell mask image")
 
 
