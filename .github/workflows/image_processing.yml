@@ -16,4 +16,6 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Run image processing script
+      env:
+        GITHUB_TOKEN: ${{ secrets.PATOKEN }}
       run: python main_python/cell_count.py
