@@ -22,11 +22,19 @@ BRANCH = "main"
 g = Github(GITHUB_TOKEN)
 repo = g.get_repo(f"{REPO_OWNER}/{REPO_NAME}")
 
+contents = repo.get_contents("output/", ref=BRANCH)
+for file in contents:
+    print(f"File: {file.path}")
+
 def download_file(remote_path, local_path):
     """Downloads a file from the GitHub repository."""
     try:
+        print(f"Downloading file from: {remote_path} to: {local_path}")
+
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
         file = repo.get_contents(remote_path, ref=BRANCH)
-        # Decode the file content from base64
         decoded_content = base64.b64decode(file.content)
         with open(local_path, "wb") as f:
             f.write(decoded_content)
