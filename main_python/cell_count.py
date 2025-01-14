@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import os
 import matplotlib.pyplot as plt
 import base64
 from cellpose import models
@@ -10,7 +11,9 @@ from matplotlib.colors import Normalize
 from github import Github
 
 # GitHub Configuration
-GITHUB_TOKEN = "${{ secrets.PATOKEN }}"  # Store this as a secret in GitHub Actions
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+if not GITHUB_TOKEN:
+    raise ValueError("GITHUB_TOKEN environment variable is missing.")    
 REPO_OWNER = "engpol"
 REPO_NAME = "Cell_Counter_Pub"
 BRANCH = "main"
