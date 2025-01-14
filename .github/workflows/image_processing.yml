@@ -3,7 +3,7 @@ name: Image Processing Workflow
 on:
   push:
     paths:
-      - input/**  # Monitor changes in the 'input' folder for uploaded images
+      - cell_images/**  # Monitor changes in the 'input' folder for uploaded images
 
 jobs:
   process_image:
