@@ -18,7 +18,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'  # Specify Python version as needed
+        python-version: 'Python 3.12.1'  # Specify Python version as needed
 
     # Step 3: Install dependencies
     - name: Install dependencies
@@ -28,4 +28,4 @@ jobs:
 
     # Step 4: Run your processing script
     - name: Process the uploaded image
-      run: python scripts/process_image.py
+      run: python main_python/cell_count.py
