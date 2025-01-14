@@ -1,20 +1,28 @@
-name: Image Processing Workflow
+
+name: Build and Push Docker Image
 
 on:
   push:
-    paths:
-      - cell_images/**  # Monitor changes in the 'input' folder for uploaded images
+    branches:
+      - main
 
 jobs:
-  process_image:
-    runs-on: ubuntu-24.04
-
+  build-and-push:
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Build & Push Image
-      run: |
-        docker build -t cell_counter_image .
-        echo "${{ secrets.DOCKERPW }}" | docker login -u "engpol" --password-stdin
-        docker tag cell_counter_image engpol/cell_counter_image:latest
-        docker push engpol/cell_counter_image:latest
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Log in to Docker Hub
+      run: echo "${{ secrets.DOCKERPW }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Build Docker image
+      run: docker build -t cell_counter_image .
+
+    - name: Tag Docker image
+      run: docker tag cell_counter_image engpol/cell_counter_image:latest
+
+    - name: Push Docker image to Docker Hub
+      run: docker push engpol/cell_counter_image:latest
+
