@@ -1,0 +1,19 @@
+name: Process Images with Docker
+
+on:
+  push:
+    paths:
+      - cell_images/**  # Trigger on changes to the input folder
+
+jobs:
+  process_image:
+    runs-on: ubuntu-latest  # Use a GitHub-hosted runner to orchestrate the container
+    container:
+      image: engpol/cell_counter_image:latest  # Use your Docker image
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Run image processing script
+      run: python main_python/cell_count.py
