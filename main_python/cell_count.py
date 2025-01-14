@@ -9,21 +9,29 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
 from github import Github
 
-encoded_file_path = "cell_images/chosen_image.tiff"  # File containing Base64-encoded tiff image
-decoded_file_path = "cell_images/decoded_image.tiff" # File with decoded tiff image
+# GitHub Configuration
+GITHUB_TOKEN = "${{ secrets.PATOKEN }}"  # Store this as a secret in GitHub Actions
+REPO_OWNER = "engpol"
+REPO_NAME = "Cell_Counter_Pub"
+BRANCH = "main"
 
-with open(encoded_file_path, "r") as encoded_file: # Read tiff image
-    encoded_content = encoded_file.read()
-    
-# Step 2: Decode the Base64 content
-decoded_content = base64.b64decode(encoded_content)
+# Initialize GitHub
+g = Github(GITHUB_TOKEN)
+repo = g.get_repo(f"{REPO_OWNER}/{REPO_NAME}")
 
-# Step 3: Write the decoded binary data back to a TIFF file
-with open(decoded_file_path, "wb") as decoded_file:
-    decoded_file.write(decoded_content)
+def download_file(remote_path, local_path):
+    """Downloads a file from the GitHub repository."""
+    try:
+        file = repo.get_contents(remote_path, ref=BRANCH)
+        # Decode the file content from base64
+        decoded_content = base64.b64decode(file.content)
+        with open(local_path, "wb") as f:
+            f.write(decoded_content)
+
+download_file("cell_images/chosen_image.tiff","decoded_image.tiff")
 
 # open image data and convert to Python from Java
-data = io.imread('cell_images/decoded_image.tiff')
+data = io.imread('decoded_image.tiff')
 # run Cellpose on cytoplasm (grayscale)
 model = models.CellposeModel(gpu=False, model_type='cyto2')
 ch = [0, 0]
@@ -46,27 +54,11 @@ colored_mask = cmap(normalized_mask)  # Apply colormap (RGBA output)
 colored_mask = (colored_mask[:, :, :3] * 255).astype(np.uint8)
 mask_pil = Image.fromarray(colored_mask)
 # Save the mask as a PNG file
-mask_pil.save('output/output_mask.png')
+mask_pil.save('output_mask.png')
 
 # Save to a text file
-with open("output/cell_number.txt", "w") as file:  # "w" mode overwrites the file if it exists
+with open("cell_number.txt", "w") as file:  # "w" mode overwrites the file if it exists
     file.write(str(num_cells))
-
-
-# Save to a text file
-with open("output/cell_number.txt", "w") as file:  # "w" mode overwrites the file if it exists
-    file.write(str(num_cells))
-
-
-# GitHub Configuration
-GITHUB_TOKEN = "${{ secrets.PATOKEN }}"  # Store this as a secret in GitHub Actions
-REPO_OWNER = "engpol"
-REPO_NAME = "Cell_Counter_Pub"
-BRANCH = "main"
-
-# Initialize GitHub
-g = Github(GITHUB_TOKEN)
-repo = g.get_repo(f"{REPO_OWNER}/{REPO_NAME}")
 
 def upload_file_to_repo(local_file_path, repo_file_path, commit_message):
     """Uploads a local file to the GitHub repository."""
@@ -96,7 +88,7 @@ def upload_file_to_repo(local_file_path, repo_file_path, commit_message):
         print(f"Created file in repo: {repo_file_path}")
 
 # Push the generated files to the repo
-upload_file_to_repo("output/cell_number.txt", "output/cell_number.txt", "Add cell number text file")
-upload_file_to_repo("output/output_mask.png", "output/output_mask.png", "Add cell mask image")
+upload_file_to_repo("cell_number.txt", "output/cell_number.txt", "Add cell number text file")
+upload_file_to_repo("output_mask.png", "output/output_mask.png", "Add cell mask image")
 
 
