@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
 
 # open image data and convert to Python from Java
-data = io.imread('cell_images/chosen_image.tiff')
+data = io.imread('cell_images/chosen_image.jpg')
 # run Cellpose on cytoplasm (grayscale)
 model = models.CellposeModel(gpu=False, model_type='cyto2')
 ch = [0, 0]
