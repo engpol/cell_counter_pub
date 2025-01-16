@@ -1,9 +1,9 @@
 name: Process Images with Docker
 
-#on:
- # push:
-  #  branches:
-   #   - main
+on:
+  push:
+    branches:
+      - main
 #on:
  # push:
   #  paths:
@@ -13,7 +13,11 @@ jobs:
   process_image:
     runs-on: ubuntu-latest  # Use a GitHub-hosted runner to orchestrate the container
     container:
-      image: engpol/cell_counter_image:latest  # Use your Docker image
+      image: image: ghcr.io/engpol/cell_counter_pub/cell_counter_image:latest  # Use your GitHub Package image
+
+    steps:
+    - name: Log in to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
     steps:
     - name: Check out repository
