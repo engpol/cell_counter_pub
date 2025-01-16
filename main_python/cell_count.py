@@ -3,6 +3,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import base64
+import requests
 from cellpose import models
 from cellpose import io
 from PIL import Image
@@ -22,24 +23,26 @@ BRANCH = "main"
 g = Github(GITHUB_TOKEN)
 repo = g.get_repo(f"{REPO_OWNER}/{REPO_NAME}")
 
-def download_file(remote_path, local_path):
-    """Downloads a file from the GitHub repository."""
-    try:
-        print(f"Downloading file from: {remote_path} to: {local_path}")
-
-        # Ensure the directory exists
-        os.makedirs(os.path.dirname(local_path), exist_ok=True)
-
-        file = repo.get_contents(remote_path, ref=BRANCH)
-        decoded_content = base64.b64decode(file.content)
+def download_file_from_raw_url(remote_path, local_path):
+    """Downloads a file from the raw GitHub URL."""
+    # Construct the raw URL
+    raw_url = f"https://raw.githubusercontent.com/{REPO_OWNER}/{REPO_NAME}/{BRANCH}/{remote_path}"
+    
+    # Make the HTTP request
+    response = requests.get(raw_url)
+    
+    # Check if the request was successful
+    if response.status_code == 200:
         with open(local_path, "wb") as f:
-            f.write(decoded_content)
+            decoded_content = base64.b64decode(response.content)
+            f.write(decoded_content)  # Write the raw content to a file
         print(f"File '{remote_path}' downloaded successfully.")
-    except Exception as e:
-        print(f"Failed to download file: {e}")
+    else:
+        print(f"Failed to download file. Status code: {response.status_code}")
 
 local_path = os.path.join(os.getcwd(), "decoded_image.tiff")
-download_file("cell_images/chosen_image.tiff", local_path)
+download_file_from_raw_url("cell_images/chosen_image.tiff", local_path)
+
 
 # open image data and convert to Python from Java
 data = io.imread(local_path)
