@@ -15,16 +15,12 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 if not GITHUB_TOKEN:
     raise ValueError("GITHUB_TOKEN environment variable is missing.")    
 REPO_OWNER = "engpol"
-REPO_NAME = "Cell_Counter_Pub"
+REPO_NAME = "cell_counter_pub"
 BRANCH = "main"
 
 # Initialize GitHub
 g = Github(GITHUB_TOKEN)
 repo = g.get_repo(f"{REPO_OWNER}/{REPO_NAME}")
-
-contents = repo.get_contents("output/", ref=BRANCH)
-for file in contents:
-    print(f"File: {file.path}")
 
 def download_file(remote_path, local_path):
     """Downloads a file from the GitHub repository."""
