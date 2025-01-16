@@ -1,13 +1,13 @@
 name: Process Images with Docker
 
-on:
-  push:
-    branches:
-      - main
 #on:
  # push:
-  #  paths:
-   #   - cell_images/**  # Trigger on changes to the input folder
+  #  branches:
+   #   - main
+on:
+  push:
+    paths:
+      - cell_images/**  # Trigger on changes to the input folder
 
 jobs:
   process_image:
