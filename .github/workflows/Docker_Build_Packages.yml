@@ -1,9 +1,9 @@
 name: Build and Push Docker Image to GitHub Packages
 ## This is for pushing the cell counter docker image to the packages of my repo. Does not build the image from scratch, use other workflow to update the image if need be. 
-#on: 
- # push: 
-  #  branches: 
-   #   - main 
+on: 
+  push: 
+    paths: 
+      - main_python/** 
 
 jobs:
   build-and-push:
