@@ -49,7 +49,7 @@ data = io.imread(local_path)
 # run Cellpose on cytoplasm (grayscale)
 model = models.CellposeModel(gpu=False, model_type='cyto2')
 ch = [0, 0]
-cyto_labels = model.eval(data, channels=ch, diameter=30)
+cyto_labels = model.eval(data, channels=ch, diameter=25)
 unique_labels = np.unique(cyto_labels[0])
 num_cells = len(unique_labels[unique_labels > 0])  # Exclude label 0
 
